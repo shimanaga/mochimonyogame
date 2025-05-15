@@ -54,3 +54,27 @@ body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: l
 #ranking-screen ol { padding-left: 1.2em; margin-bottom: 20px; display: block; }
 .ranking-footer { text-align: center; margin-top: 10px; }
 #ranking-screen button, #result-screen button { padding: 10px 20px; margin: 10px; }
+
+@media screen and (max-width: 768px) {
+  .left-panel, .right-panel {
+    width: 100%;
+  }
+
+  #game-screen {
+    flex-direction: column;
+  }
+
+  #history-list {
+    max-height: 8em;
+    overflow-y: auto;
+  }
+
+  .right-panel {
+    order: 3;
+    margin-top: 1em;
+  }
+
+  #image-container {
+    margin-top: -1em; /* 上へ少し詰める */
+  }
+}
