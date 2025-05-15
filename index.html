@@ -6,7 +6,6 @@
   <title>もちもにょゲーム</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
   <script>
@@ -24,7 +23,7 @@
   </script>
 </head>
 <body>
-  <!-- タイトル画面 -->
+
   <div id="title-screen" class="screen">
     <h1 class="game-title">もちもにょゲーム</h1>
     <label for="player-name">プレイヤー名：</label>
@@ -35,7 +34,6 @@
     </div>
   </div>
 
-  <!-- ゲーム画面 -->
   <div id="game-screen" class="screen hidden">
     <div class="left-panel">
       <div class="status-bar">
@@ -56,7 +54,6 @@
     </div>
   </div>
 
-  <!-- 結果画面 -->
   <div id="result-screen" class="screen hidden">
     <h2>ゲーム終了！</h2>
     <p>正解数：<span id="correct-count"></span></p>
@@ -68,7 +65,6 @@
     </div>
   </div>
 
-  <!-- ランキング画面 -->
   <div id="ranking-screen" class="screen hidden">
     <h2>スコアランキング（上位10名）</h2>
     <ol id="ranking-list"></ol>
