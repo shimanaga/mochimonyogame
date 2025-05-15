@@ -15,7 +15,7 @@ const images = [
   { name: 'もにょ太', group: 'C', src: 'img/monyo.jpeg', rarity: 1 },
   { name: 'みらくるもにょ太', group: 'C', src: 'img/monyo_miracle.png', rarity: 5 },
   { name: 'かさもにょ太', group: 'C', src: 'img/monyo_kasa.png', rarity: 3 },
-  { name: 'バドもにょ太', group: 'C', src: 'img/monyo_bad.png', rarity: 2 },
+  { name: 'バドもにょ太', group: 'C', src: 'img/monyo_bado.png', rarity: 2 },
   { name: 'おこもにょ太', group: 'C', src: 'img/monyo_rage.png', rarity: 3 },
   { name: '考えもにょ太', group: 'C', src: 'img/monyo_think.png', rarity: 3 },
   { name: '朝ごはんもにょ太', group: 'C', src: 'img/monyo_morning.png', rarity: 2 },
