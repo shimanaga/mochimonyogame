@@ -126,33 +126,62 @@ function pickQuestion(){
   }
   return pool[Math.floor(Math.random()*pool.length)];
 }
-function nextQuestion(){ const q=pickQuestion(); imgEl.src=q.src; imgEl.dataset.answer=q.group; imgEl.dataset.name=q.name; imgEl.dataset.rarity=q.rarity; }
+
+function nextQuestion() {
+  const q = pickQuestion();
+
+  // 新しい画像を表示する直前に再表示
+  imgEl.style.visibility = 'visible';
+  imgEl.src = q.src;
+  imgEl.dataset.answer = q.group;
+  imgEl.dataset.name = q.name;
+  imgEl.dataset.rarity = q.rarity;
+}
 
 function getMaxHistoryCount() {
-  return window.innerWidth < 768 ? 5 : 10;
+  return window.innerWidth < 768 ? 3 : 10;
 }
 
 function renderHistory(){
   historyList.innerHTML = '';
   const max = getMaxHistoryCount();
   const recent = questionHistory.slice(0, max);
-  recent.forEach(item => {
+
+  for (let i = 0; i < max; i++) {
     const li = document.createElement('li');
-    const spanName = document.createElement('span');
-    spanName.textContent = item.name;
-    const spanStar = document.createElement('span');
-    spanStar.className = 'star';
-    spanStar.textContent = '★'.repeat(item.rarity) + '☆'.repeat(5 - item.rarity);
-    li.appendChild(spanName);
-    li.appendChild(spanStar);
+
+    if (i < recent.length) {
+      const item = recent[i];
+      const spanName = document.createElement('span');
+      spanName.textContent = item.name;
+      const spanStar = document.createElement('span');
+      spanStar.className = 'star';
+      spanStar.textContent = '★'.repeat(item.rarity) + '☆'.repeat(5 - item.rarity);
+      li.appendChild(spanName);
+      li.appendChild(spanStar);
+    } else {
+      li.innerHTML = '&nbsp;';  // 空のスペース確保（高さ維持用）
+      li.style.visibility = 'hidden'; // 見えないけどスペースは占有
+    }
+
     historyList.appendChild(li);
-  });
+  }
 }
 
 buttons.forEach(btn=>btn.addEventListener('click',()=>{ const ans=btn.dataset.group; const corr=imgEl.dataset.answer; const qName=imgEl.dataset.name; const qR=+imgEl.dataset.rarity; questionHistory.unshift({name:qName,rarity:qR}); if(questionHistory.length>10) questionHistory.pop(); renderHistory(); let delta=0; if(ans===corr){ currentStreak++; delta=20+(currentStreak-1); correctCount++; maxStreak=Math.max(maxStreak,currentStreak); } else { currentStreak=0; delta=-15; } score+=delta; if(score<0) score=0; scoreDisplay.textContent=`スコア: ${score}`; scoreDelta.textContent=`${delta>0?'+'+delta:delta}`; scoreDelta.className=`delta ${delta>0?'plus':'minus'}`; setTimeout(()=>{ scoreDelta.textContent=''; scoreDelta.className='delta'; },800); showFeedback(ans===corr); }));
 
-function showFeedback(ok){ feedbackEl.textContent=ok?'○':'×'; feedbackEl.classList.remove('hidden'); setTimeout(()=>{ feedbackEl.classList.add('hidden');},200); nextQuestion();}
+function showFeedback(ok) {
+  imgEl.style.visibility = 'hidden';
 
+  feedbackEl.textContent = ok ? '○' : '×';
+  feedbackEl.classList.remove('hidden');
+
+  setTimeout(() => {
+    feedbackEl.classList.add('hidden');
+  }, 200);
+
+  nextQuestion();
+}
 function endGame(){ clearInterval(timerInterval); updateRanking(); correctCountEl.textContent=correctCount; maxStreakEl.textContent=maxStreak; finalScoreEl.textContent=score; showScreen(resultScreen); }
 
 startBtn.onclick=()=>{ playerName=playerNameInput.value.trim()||'名無しのもにょ'; correctCount=0; currentStreak=0; maxStreak=0; score=0; questionHistory=[]; scoreDisplay.textContent='スコア: 0'; renderHistory(); showScreen(gameScreen); startCountdown(); };
