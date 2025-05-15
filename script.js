@@ -128,11 +128,30 @@ function pickQuestion(){
 }
 function nextQuestion(){ const q=pickQuestion(); imgEl.src=q.src; imgEl.dataset.answer=q.group; imgEl.dataset.name=q.name; imgEl.dataset.rarity=q.rarity; }
 
-function renderHistory(){ historyList.innerHTML=''; questionHistory.forEach(item=>{ const li=document.createElement('li'); const spanName=document.createElement('span'); spanName.textContent=item.name; const spanStar=document.createElement('span'); spanStar.className='star'; spanStar.textContent='★'.repeat(item.rarity)+'☆'.repeat(5-item.rarity); li.appendChild(spanName); li.appendChild(spanStar); historyList.appendChild(li); }); }
+function getMaxHistoryCount() {
+  return window.innerWidth < 768 ? 5 : 10;
+}
+
+function renderHistory(){
+  historyList.innerHTML = '';
+  const max = getMaxHistoryCount();
+  const recent = questionHistory.slice(0, max);
+  recent.forEach(item => {
+    const li = document.createElement('li');
+    const spanName = document.createElement('span');
+    spanName.textContent = item.name;
+    const spanStar = document.createElement('span');
+    spanStar.className = 'star';
+    spanStar.textContent = '★'.repeat(item.rarity) + '☆'.repeat(5 - item.rarity);
+    li.appendChild(spanName);
+    li.appendChild(spanStar);
+    historyList.appendChild(li);
+  });
+}
 
 buttons.forEach(btn=>btn.addEventListener('click',()=>{ const ans=btn.dataset.group; const corr=imgEl.dataset.answer; const qName=imgEl.dataset.name; const qR=+imgEl.dataset.rarity; questionHistory.unshift({name:qName,rarity:qR}); if(questionHistory.length>10) questionHistory.pop(); renderHistory(); let delta=0; if(ans===corr){ currentStreak++; delta=20+(currentStreak-1); correctCount++; maxStreak=Math.max(maxStreak,currentStreak); } else { currentStreak=0; delta=-15; } score+=delta; if(score<0) score=0; scoreDisplay.textContent=`スコア: ${score}`; scoreDelta.textContent=`${delta>0?'+'+delta:delta}`; scoreDelta.className=`delta ${delta>0?'plus':'minus'}`; setTimeout(()=>{ scoreDelta.textContent=''; scoreDelta.className='delta'; },800); showFeedback(ans===corr); }));
 
-function showFeedback(ok){ feedbackEl.textContent=ok?'○':'×'; feedbackEl.classList.remove('hidden'); setTimeout(()=>{ feedbackEl.classList.add('hidden'); nextQuestion(); },200); }
+function showFeedback(ok){ feedbackEl.textContent=ok?'○':'×'; feedbackEl.classList.remove('hidden'); setTimeout(()=>{ feedbackEl.classList.add('hidden');},200); nextQuestion();}
 
 function endGame(){ clearInterval(timerInterval); updateRanking(); correctCountEl.textContent=correctCount; maxStreakEl.textContent=maxStreak; finalScoreEl.textContent=score; showScreen(resultScreen); }
 
