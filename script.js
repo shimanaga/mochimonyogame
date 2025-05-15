@@ -95,27 +95,61 @@ async function showRanking() {
     rankingList.appendChild(li);
   });
 }
-function showScreen(s){ [titleScreen, gameScreen, resultScreen, rankingScreen].forEach(x=>x.classList.add('hidden')); s.classList.remove('hidden'); }
+function showScreen(s){
+  [titleScreen, gameScreen, resultScreen, rankingScreen].forEach(x=>x.classList.add('hidden'));
+  s.classList.remove('hidden');
+}
 
 function startCountdown(){
+  imgEl.src = '';
+  imgEl.style.visibility = 'hidden';
+
   gameScreen.classList.add('countdown-mode');
-  let c=3;
+  let c = 3;
   countdownEl.textContent = c;
-  const ci = setInterval(()=>{
+
+  const ci = setInterval(() => {
     c--;
-    if(c>0) countdownEl.textContent = c;
-    else {
+    if (c > 0) {
+      countdownEl.textContent = c;
+    } else {
       clearInterval(ci);
       countdownEl.textContent = '';
       gameScreen.classList.remove('countdown-mode');
       startTimer();
       nextQuestion();
     }
-  },1000);
+  }, 1000);
 }
-function startTimer(){ const dur=60*1000; endTime=Date.now()+dur; timerInterval=setInterval(()=>{ const rem=endTime-Date.now(); if(rem<=0){ clearInterval(timerInterval); timerEl.textContent='00:00.000'; endGame(); } else{ const ms=rem%1000; const s=Math.floor(rem/1000)%60; const m=Math.floor(rem/60000); timerEl.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`; } },16); }
 
-function getBasePool(){ const groups=['A','B','C']; let pool=[]; groups.forEach(g=>{ const grp=images.filter(i=>i.group===g); const minR=Math.min(...grp.map(i=>i.rarity)); pool.push(...grp.filter(i=>i.rarity===minR)); }); return pool; }
+function startTimer(){
+  const dur=60*1000;
+  endTime=Date.now()+dur;
+  timerInterval=setInterval(()=>{
+    const rem=endTime-Date.now();
+    if(rem<=0){
+      clearInterval(timerInterval);
+      timerEl.textContent='00:00.000';
+      endGame();
+    } else {
+      const ms=rem%1000;
+      const s=Math.floor(rem/1000)%60;
+      const m=Math.floor(rem/60000);
+      timerEl.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`;
+    }
+  },16);
+}
+
+function getBasePool(){
+  const groups=['A','B','C'];
+  let pool=[];
+  groups.forEach(g=>{
+    const grp=images.filter(i=>i.group===g);
+    const minR=Math.min(...grp.map(i=>i.rarity));
+    pool.push(...grp.filter(i=>i.rarity===minR));
+  });
+  return pool;
+}
 
 function pickQuestion(){
   let pool;
@@ -168,7 +202,35 @@ function renderHistory(){
   }
 }
 
-buttons.forEach(btn=>btn.addEventListener('click',()=>{ const ans=btn.dataset.group; const corr=imgEl.dataset.answer; const qName=imgEl.dataset.name; const qR=+imgEl.dataset.rarity; questionHistory.unshift({name:qName,rarity:qR}); if(questionHistory.length>10) questionHistory.pop(); renderHistory(); let delta=0; if(ans===corr){ currentStreak++; delta=20+(currentStreak-1); correctCount++; maxStreak=Math.max(maxStreak,currentStreak); } else { currentStreak=0; delta=-15; } score+=delta; if(score<0) score=0; scoreDisplay.textContent=`スコア: ${score}`; scoreDelta.textContent=`${delta>0?'+'+delta:delta}`; scoreDelta.className=`delta ${delta>0?'plus':'minus'}`; setTimeout(()=>{ scoreDelta.textContent=''; scoreDelta.className='delta'; },800); showFeedback(ans===corr); }));
+buttons.forEach(btn=>btn.addEventListener('click',()=>{
+  const ans=btn.dataset.group;
+  const corr=imgEl.dataset.answer;
+  const qName=imgEl.dataset.name;
+  const qR=+imgEl.dataset.rarity;
+  questionHistory.unshift({name:qName,rarity:qR}); 
+  if(questionHistory.length>10) questionHistory.pop();
+  renderHistory();
+  let delta=0;
+  if(ans===corr){
+    currentStreak++;
+    delta=20+(currentStreak-1);
+    correctCount++;
+    maxStreak=Math.max(maxStreak,currentStreak);
+  } else {
+    currentStreak=0;
+    delta=-15;
+  }
+  score+=delta;
+  if(score<0) score=0;
+  scoreDisplay.textContent=`スコア: ${score}`;
+  scoreDelta.textContent=`${delta>0?'+'+delta:delta}`;
+  scoreDelta.className=`delta ${delta>0?'plus':'minus'}`;
+  setTimeout(()=>{
+    scoreDelta.textContent='';
+    scoreDelta.className='delta';
+  },800);
+  showFeedback(ans===corr);
+}));
 
 function showFeedback(ok) {
   imgEl.style.visibility = 'hidden';
@@ -182,7 +244,43 @@ function showFeedback(ok) {
 
   nextQuestion();
 }
-function endGame(){ clearInterval(timerInterval); updateRanking(); correctCountEl.textContent=correctCount; maxStreakEl.textContent=maxStreak; finalScoreEl.textContent=score; showScreen(resultScreen); }
 
-startBtn.onclick=()=>{ playerName=playerNameInput.value.trim()||'名無しのもにょ'; correctCount=0; currentStreak=0; maxStreak=0; score=0; questionHistory=[]; scoreDisplay.textContent='スコア: 0'; renderHistory(); showScreen(gameScreen); startCountdown(); };
-playAgainBtn.onclick=()=>startBtn.click(); backToTitleBtn.onclick=()=>showScreen(titleScreen); viewRankingBtn.onclick=()=>{ showRanking(); showScreen(rankingScreen); }; rankingBackBtn.onclick=()=>showScreen(titleScreen);
+function endGame(){
+  clearInterval(timerInterval);
+  updateRanking();
+  correctCountEl.textContent=correctCount;
+  maxStreakEl.textContent=maxStreak;
+  finalScoreEl.textContent=score;
+  showScreen(resultScreen);
+}
+
+function preloadImages(imageList) {
+  imageList.forEach(img => {
+    const preloadImg = new Image();
+    preloadImg.src = img.src;
+  });
+}
+
+startBtn.onclick = () => {
+  playerName = playerNameInput.value.trim() || '名無しのもにょ';
+
+  preloadImages(images);
+
+  correctCount = 0;
+  currentStreak = 0;
+  maxStreak = 0;
+  score = 0;
+  questionHistory = [];
+  scoreDisplay.textContent = 'スコア: 0';
+  renderHistory();
+  showScreen(gameScreen);
+  startCountdown();
+};
+
+playAgainBtn.onclick=()=>startBtn.click();
+backToTitleBtn.onclick=()=>showScreen(titleScreen);
+viewRankingBtn.onclick=()=>{
+  showRanking();
+  showScreen(rankingScreen);
+};
+rankingBackBtn.onclick=()=>showScreen(titleScreen);
