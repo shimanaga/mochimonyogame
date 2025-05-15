@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>もちもにょゲーム</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyACFBLZBp5_kqRUSIVhpCaJJTeavSIiUFU",
+      authDomain: "ranking-f099d.firebaseapp.com",
+      projectId: "ranking-f099d",
+      storageBucket: "ranking-f099d.firebasestorage.app",
+      messagingSenderId: "42395428423",
+      appId: "1:42395428423:web:aeca26141f4eba63e9f362",
+      measurementId: "G-Q21KD0LRW5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+</head>
+<body>
+  <!-- タイトル画面 -->
+  <div id="title-screen" class="screen">
+    <h1 class="game-title">もちもにょゲーム</h1>
+    <label for="player-name">プレイヤー名：</label>
+    <input type="text" id="player-name" maxlength="10" placeholder="名無しのもにょ" />
+    <div class="btn-group">
+      <button id="start-btn" class="btn start">ゲーム開始</button>
+      <button id="view-ranking-btn" class="btn ranking">ランキングを見る</button>
+    </div>
+  </div>
+
+  <!-- ゲーム画面 -->
+  <div id="game-screen" class="screen hidden">
+    <div class="left-panel">
+      <div class="status-bar">
+        <span id="score-display">スコア: 0</span>
+        <span id="score-delta" class="delta"></span>
+        <span id="timer" class="medium-text">01:00.000</span>
+      </div>
+      <div id="image-container">
+        <img id="question-img" src="" alt="出題画像" />
+        <div id="countdown" class="countdown-overlay"></div>
+        <div id="feedback" class="feedback hidden"></div>
+      </div>
+      <div id="buttons" class="btn-group"></div>
+    </div>
+    <div class="right-panel">
+      <h2>出題履歴</h2>
+      <ul id="history-list"></ul>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="result-screen" class="screen hidden">
+    <h2>ゲーム終了！</h2>
+    <p>正解数：<span id="correct-count"></span></p>
+    <p>最高連続正解数：<span id="max-streak"></span></p>
+    <p>スコア：<span id="final-score"></span></p>
+    <div class="btn-group">
+      <button id="play-again-btn" class="btn start">もう一度プレイ</button>
+      <button id="back-to-title-btn" class="btn">タイトルへ戻る</button>
+    </div>
+  </div>
+
+  <!-- ランキング画面 -->
+  <div id="ranking-screen" class="screen hidden">
+    <h2>スコアランキング（上位10名）</h2>
+    <ol id="ranking-list"></ol>
+    <div class="ranking-footer">
+      <button id="ranking-back-btn" class="btn">タイトルへ戻る</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

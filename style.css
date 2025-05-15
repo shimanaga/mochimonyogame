@@ -1,0 +1,56 @@
+/* ベース */
+body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: linear-gradient(135deg, #ffecd2, #fcb69f); display: flex; justify-content: center; align-items: center; height: 100vh; }
+.screen { text-align: center; background: rgba(255,255,255,0.85); padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.hidden { display: none; }
+.game-title { font-size: 2rem; margin-bottom: 10px; }
+.big-text { font-size: 3rem; color: #333; }
+.medium-text { font-size: 1.5rem; margin-bottom: 10px; }
+.btn-group { margin-top: 10px; }
+.btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: transform 0.1s; }
+.btn:hover { transform: scale(1.05); }
+.start { background: #6a11cb; background: linear-gradient(135deg, #6a11cb, #2575fc); color: #fff; }
+.ranking { background: #f7971e; color: #fff; }
+.answer { background: #34d399; color: #fff; }
+.left-panel { display: inline-block; vertical-align: top; }
+#image-container { position: relative; width: 300px; height: 300px; background: #fff; margin: 0 auto 10px; border: 4px solid #2575fc; border-radius: 12px; overflow: hidden; }
+#image-container img { width: 100%; height: 100%; object-fit: contain; visibility: visible; }
+/* カウントダウン中は画像非表示 */
+#game-screen.countdown-mode #question-img { visibility: hidden; }
+
+#game-screen {
+  width: 90%; /* 横幅を増加 */
+  max-width: 1200px; /* 必要に応じて最大幅を設定 */
+  margin: 0 auto; /* 中央揃え */
+}
+
+.countdown-overlay {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4rem;
+  color: #333;
+  z-index: 2;
+}
+.feedback { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4rem; color: rgba(0,0,0,0.7); z-index: 3; }
+
+/* ボタン保持領域 */
+#buttons { min-height: 60px; display: flex; justify-content: center; align-items: center; }
+/* カウントダウン中はボタンも不可視 */
+#game-screen.countdown-mode #buttons { visibility: hidden; }
+
+.right-panel { display: inline-block; vertical-align: top; text-align: left; margin-left: 20px; }
+#history-list { list-style: none; padding: 0; width: 250px;}
+#history-list li { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
+.star { margin-left: 5px; }
+.status-bar { display: flex; align-items: center; margin-bottom: 10px; padding: 0 10px; }
+#score-display { font-size: 1.2rem; font-weight: bold; color: #2575fc; }
+.delta { font-size: 1rem; margin-left: 5px; opacity: 0; transition: opacity 0.5s; }
+.delta.plus { color: #16a34a; opacity: 1; }
+.delta.minus { color: #dc2626; opacity: 1; }
+#timer { margin-left: auto; }
+
+/* ランキング1位強調 */
+#ranking-list li:first-child { font-size: 1.3rem; color: #eab308; }
+#ranking-screen ol { padding-left: 1.2em; margin-bottom: 20px; display: block; }
+.ranking-footer { text-align: center; margin-top: 10px; }
+#ranking-screen button, #result-screen button { padding: 10px 20px; margin: 10px; }
