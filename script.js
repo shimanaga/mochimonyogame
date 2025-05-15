@@ -1,4 +1,3 @@
-// 画像データ（name, group, src, rarity）
 const images = [
   { name: 'かつおぶし', group: 'A', src: 'img/mochi.png', rarity: 1 },
   { name: 'やきもち', group: 'A', src: 'img/mochi_yaki.jpg', rarity: 3 },
@@ -31,7 +30,6 @@ let score = 0;
 let questionHistory = [];
 let timerInterval, endTime;
 
-// 要素取得
 const gameScreen = document.getElementById('game-screen');
 const scoreDisplay = document.getElementById('score-display');
 const scoreDelta   = document.getElementById('score-delta');
@@ -55,17 +53,21 @@ const backToTitleBtn = document.getElementById('back-to-title-btn');
 const rankingBackBtn = document.getElementById('ranking-back-btn');
 const playerNameInput = document.getElementById('player-name');
 
-// ボタン生成（固定）
-['A','B','C'].forEach(g => {
+const groupLabels = {
+  'A': 'もち',
+  'B': 'その他',
+  'C': 'もにょ'
+};
+
+Object.entries(groupLabels).forEach(([group, label]) => {
   const btn = document.createElement('button');
-  btn.textContent = `Group ${g}`;
-  btn.dataset.group = g;
+  btn.textContent = label;
+  btn.dataset.group = group;
   btn.className = 'btn answer';
   buttonsWrap.appendChild(btn);
 });
 const buttons = buttonsWrap.querySelectorAll('button');
 
-// ランキング(localStorage)
 async function saveRankingToServer(name, score) {
   const rankingRef = firebase.firestore().collection("ranking");
   await rankingRef.add({ name, score, timestamp: Date.now() });
@@ -93,10 +95,8 @@ async function showRanking() {
     rankingList.appendChild(li);
   });
 }
-// 画面切替
 function showScreen(s){ [titleScreen, gameScreen, resultScreen, rankingScreen].forEach(x=>x.classList.add('hidden')); s.classList.remove('hidden'); }
 
-// カウントダウン→タイマー
 function startCountdown(){
   gameScreen.classList.add('countdown-mode');
   let c=3;
@@ -115,10 +115,8 @@ function startCountdown(){
 }
 function startTimer(){ const dur=60*1000; endTime=Date.now()+dur; timerInterval=setInterval(()=>{ const rem=endTime-Date.now(); if(rem<=0){ clearInterval(timerInterval); timerEl.textContent='00:00.000'; endGame(); } else{ const ms=rem%1000; const s=Math.floor(rem/1000)%60; const m=Math.floor(rem/60000); timerEl.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`; } },16); }
 
-// 初期プール取得
 function getBasePool(){ const groups=['A','B','C']; let pool=[]; groups.forEach(g=>{ const grp=images.filter(i=>i.group===g); const minR=Math.min(...grp.map(i=>i.rarity)); pool.push(...grp.filter(i=>i.rarity===minR)); }); return pool; }
 
-// 出題選択
 function pickQuestion(){
   let pool;
   if(score <= 200) {
@@ -130,17 +128,13 @@ function pickQuestion(){
 }
 function nextQuestion(){ const q=pickQuestion(); imgEl.src=q.src; imgEl.dataset.answer=q.group; imgEl.dataset.name=q.name; imgEl.dataset.rarity=q.rarity; }
 
-// 履歴描画
 function renderHistory(){ historyList.innerHTML=''; questionHistory.forEach(item=>{ const li=document.createElement('li'); const spanName=document.createElement('span'); spanName.textContent=item.name; const spanStar=document.createElement('span'); spanStar.className='star'; spanStar.textContent='★'.repeat(item.rarity)+'☆'.repeat(5-item.rarity); li.appendChild(spanName); li.appendChild(spanStar); historyList.appendChild(li); }); }
 
-// 回答処理
 buttons.forEach(btn=>btn.addEventListener('click',()=>{ const ans=btn.dataset.group; const corr=imgEl.dataset.answer; const qName=imgEl.dataset.name; const qR=+imgEl.dataset.rarity; questionHistory.unshift({name:qName,rarity:qR}); if(questionHistory.length>10) questionHistory.pop(); renderHistory(); let delta=0; if(ans===corr){ currentStreak++; delta=20+(currentStreak-1); correctCount++; maxStreak=Math.max(maxStreak,currentStreak); } else { currentStreak=0; delta=-15; } score+=delta; if(score<0) score=0; scoreDisplay.textContent=`スコア: ${score}`; scoreDelta.textContent=`${delta>0?'+'+delta:delta}`; scoreDelta.className=`delta ${delta>0?'plus':'minus'}`; setTimeout(()=>{ scoreDelta.textContent=''; scoreDelta.className='delta'; },800); showFeedback(ans===corr); }));
 
 function showFeedback(ok){ feedbackEl.textContent=ok?'○':'×'; feedbackEl.classList.remove('hidden'); setTimeout(()=>{ feedbackEl.classList.add('hidden'); nextQuestion(); },200); }
 
-// ゲーム終了
 function endGame(){ clearInterval(timerInterval); updateRanking(); correctCountEl.textContent=correctCount; maxStreakEl.textContent=maxStreak; finalScoreEl.textContent=score; showScreen(resultScreen); }
 
-// イベント
 startBtn.onclick=()=>{ playerName=playerNameInput.value.trim()||'名無しのもにょ'; correctCount=0; currentStreak=0; maxStreak=0; score=0; questionHistory=[]; scoreDisplay.textContent='スコア: 0'; renderHistory(); showScreen(gameScreen); startCountdown(); };
 playAgainBtn.onclick=()=>startBtn.click(); backToTitleBtn.onclick=()=>showScreen(titleScreen); viewRankingBtn.onclick=()=>{ showRanking(); showScreen(rankingScreen); }; rankingBackBtn.onclick=()=>showScreen(titleScreen);
